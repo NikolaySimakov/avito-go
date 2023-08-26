@@ -1,3 +1,5 @@
-module avito-go
+module github.com/NikolaySimakov/avito-go
 
 go 1.19
+
+require github.com/gorilla/mux v1.8.0 // indirect
