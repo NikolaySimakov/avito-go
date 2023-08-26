@@ -16,7 +16,7 @@ func Run() {
 	// Init server
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         config.Address(),
+		Addr:         config.Server().Address,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
