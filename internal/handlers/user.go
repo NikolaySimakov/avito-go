@@ -4,20 +4,20 @@ import (
 	"net/http"
 )
 
-func Add(w http.ResponseWriter, r *http.Request) {
+func AddUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetSegments(w http.ResponseWriter, r *http.Request) {
+func GetUserSegments(w http.ResponseWriter, r *http.Request) {
 	// var id int
 
 	// returns segments.Segments
 }
 
-func Edit(w http.ResponseWriter, r *http.Request) {
+func EditUserSegments(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func Delete() {
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 }
