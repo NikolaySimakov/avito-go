@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/NikolaySimakov/avito-go/config"
+	_ "github.com/lib/pq"
 )
 
 func Database() *sql.DB {
