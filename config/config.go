@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/joho/godotenv"
 )
 
 type ServerConfig struct {
@@ -23,6 +25,14 @@ type PostgresConfig struct {
 func (pgConfig *PostgresConfig) GetURL() string {
 	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		pgConfig.Host, pgConfig.Port, pgConfig.User, pgConfig.Password, pgConfig.Name)
+}
+
+func init() {
+	// loads values from .env into the system
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("No .env file found")
+	}
 }
 
 func Server() ServerConfig {
