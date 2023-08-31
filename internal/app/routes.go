@@ -14,5 +14,9 @@ func NewRouter(repos *db.Repositories) *mux.Router {
 	route.HandleFunc("/segment/", segmentHandler.Add).Methods("POST")
 	route.HandleFunc("/segment/", segmentHandler.Delete).Methods("DELETE")
 
+	// Users
+	userHandler := handlers.NewUserHandler(repos)
+	route.HandleFunc("/user/", userHandler.Show).Methods("GET")
+	route.HandleFunc("/user/", userHandler.Add).Methods("POST")
 	return route
 }
