@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type User struct {
-	Id        string    `db:"user_id"`
+type Segment struct {
+	Slug      string    `db:"slug"`
 	CreatedAt time.Time `db:"created_at"`
 }
