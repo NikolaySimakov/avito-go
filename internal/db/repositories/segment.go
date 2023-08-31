@@ -17,8 +17,8 @@ func NewSegmentRepository(db *sql.DB) *SegmentRepository {
 }
 
 func (sr *SegmentRepository) CreateSegment(slug string) error {
-	sql_query := "INSERT INTO segments (slug) VALUES ($1)"
-	_, err := sr.db.Exec(sql_query, slug)
+	sqlQuery := "INSERT INTO segments (slug) VALUES ($1)"
+	_, err := sr.db.Exec(sqlQuery, slug)
 	if err != nil {
 		return err
 	}
@@ -26,9 +26,23 @@ func (sr *SegmentRepository) CreateSegment(slug string) error {
 	return nil
 }
 
+func (sr *SegmentRepository) segmentExist(slug string) (bool, error) {
+	sqlQuery := "SELECT slug FROM segments WHERE slug = $1"
+	err := sr.db.QueryRow(sqlQuery, slug).Scan(&slug)
+	if err != nil {
+		if err != sql.ErrNoRows {
+			return false, errors.ErrDatabase
+		}
+
+		return false, nil
+	}
+
+	return true, nil
+}
+
 func (sr *SegmentRepository) DeleteSegment(slug string) error {
-	sql_query := "DELETE FROM segments WHERE slug = $1"
-	_, err := sr.db.Exec(sql_query, slug)
+	sqlQuery := "DELETE FROM segments WHERE slug = $1"
+	_, err := sr.db.Exec(sqlQuery, slug)
 	if err != nil {
 		return errors.ErrNotFound
 	}
