@@ -18,19 +18,19 @@ func NewSegmentRouter(subrouter *mux.Router, r db.Segment) {
 		repository: r,
 	}
 
-	subrouter.HandleFunc("/", sr.Add).Methods("POST")
-	subrouter.HandleFunc("/", sr.Delete).Methods("DELETE")
+	subrouter.HandleFunc("/", sr.add).Methods("POST")
+	subrouter.HandleFunc("/", sr.delete).Methods("DELETE")
 }
 
 type createSegmentInput struct {
+	Slug string `json:"slug" validate:"required"`
+}
+
+type createSegmentOutput struct {
 	Slug string `json:"slug"`
 }
 
-type createSegmentResponse struct {
-	Slug string `json:"slug"`
-}
-
-func (sr *SegmentRoutes) Add(w http.ResponseWriter, r *http.Request) {
+func (sr *SegmentRoutes) add(w http.ResponseWriter, r *http.Request) {
 	var input createSegmentInput
 
 	decoder := json.NewDecoder(r.Body)
@@ -43,11 +43,11 @@ func (sr *SegmentRoutes) Add(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	segmentResponse := createSegmentResponse{
+	segmentOutput := createSegmentOutput{
 		Slug: input.Slug,
 	}
 
-	jsonResponse, jsonError := json.Marshal(segmentResponse)
+	jsonResponse, jsonError := json.Marshal(segmentOutput)
 
 	if jsonError != nil {
 		panic(jsonError)
@@ -59,10 +59,10 @@ func (sr *SegmentRoutes) Add(w http.ResponseWriter, r *http.Request) {
 }
 
 type deleteSegmentInput struct {
-	Slug string `json:"slug"`
+	Slug string `json:"slug" validate:"required"`
 }
 
-func (sr *SegmentRoutes) Delete(w http.ResponseWriter, r *http.Request) {
+func (sr *SegmentRoutes) delete(w http.ResponseWriter, r *http.Request) {
 	var input deleteSegmentInput
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&input)

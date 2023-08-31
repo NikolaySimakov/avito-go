@@ -22,9 +22,9 @@ func NewUserRouter(subrouter *mux.Router, r db.User) {
 }
 
 type userSegmentsInput struct {
-	UserId         string   `json:"user_id"`
-	AddSegments    []string `json:"add_segments"`
-	DeleteSegments []string `json:"delete_segments"`
+	UserId         string   `json:"user_id" validate:"required"`
+	AddSegments    []string `json:"add_segments" validate:"required"`
+	DeleteSegments []string `json:"delete_segments" validate:"required"`
 }
 
 func (ur *UserRoutes) add(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +52,7 @@ func (ur *UserRoutes) add(w http.ResponseWriter, r *http.Request) {
 }
 
 type showSegmentsInput struct {
-	UserId string `json:"user_id"`
+	UserId string `json:"user_id" validate:"required"`
 }
 
 type showSegmentsOutput struct {
