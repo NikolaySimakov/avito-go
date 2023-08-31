@@ -18,14 +18,21 @@ type User interface {
 	GetUserSegments(userId string) ([]string, error)
 }
 
+type UserTTL interface {
+	SetTTLForUserSegments(userId string, slugs []string, ttl int64) error
+	DeleteUserSegments(userId string) error
+}
+
 type Repositories struct {
 	Segment
 	User
+	UserTTL
 }
 
 func NewRepositories(db *sql.DB) *Repositories {
 	return &Repositories{
 		Segment: repositories.NewSegmentRepository(db),
 		User:    repositories.NewUserRepository(db),
+		UserTTL: repositories.NewUserTTLRepository(db),
 	}
 }

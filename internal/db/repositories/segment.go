@@ -34,7 +34,7 @@ func (sr *SegmentRepository) segmentExist(slug string) (bool, error) {
 			return false, errors.ErrDatabase
 		}
 
-		return false, nil
+		return false, errors.ErrSegmentsNotExist
 	}
 
 	return true, nil

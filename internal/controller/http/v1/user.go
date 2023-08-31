@@ -9,12 +9,14 @@ import (
 )
 
 type UserRoutes struct {
-	repository db.User
+	userRepository    db.User
+	userTTLRepository db.UserTTL
 }
 
-func NewUserRouter(subrouter *mux.Router, r db.User) {
+func NewUserRouter(subrouter *mux.Router, r *db.Repositories) {
 	ur := &UserRoutes{
-		repository: r,
+		userRepository:    r.User,
+		userTTLRepository: r.UserTTL,
 	}
 
 	subrouter.HandleFunc("/", ur.show).Methods("GET")
@@ -25,6 +27,7 @@ type userSegmentsInput struct {
 	UserId         string   `json:"user_id" validate:"required"`
 	AddSegments    []string `json:"add_segments" validate:"required"`
 	DeleteSegments []string `json:"delete_segments" validate:"required"`
+	TTL            uint64   `json:"ttl"`
 }
 
 func (ur *UserRoutes) add(w http.ResponseWriter, r *http.Request) {
@@ -40,16 +43,26 @@ func (ur *UserRoutes) add(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
-	if err := ur.repository.CreateUserIfNotExist(input.UserId); err != nil {
+	if err := ur.userRepository.CreateUserIfNotExist(input.UserId); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	if err := ur.repository.AddUserSegments(input.UserId, input.AddSegments); err != nil {
+	if err := ur.userRepository.AddUserSegments(input.UserId, input.AddSegments); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	if err := ur.repository.DeleteUserSegments(input.UserId, input.DeleteSegments); err != nil {
+	if err := ur.userRepository.DeleteUserSegments(input.UserId, input.DeleteSegments); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	if input.TTL != 0 {
+		if err := ur.userTTLRepository.SetTTLForUserSegments(input.UserId, input.AddSegments, int64(input.TTL)); err != nil {
+			http.Error(
+				w,
+				http.StatusText(http.StatusInternalServerError),
+				http.StatusInternalServerError,
+			)
+		}
 	}
 
 	w.WriteHeader(http.StatusNoContent)
@@ -76,7 +89,16 @@ func (ur *UserRoutes) show(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
-	segments, err := ur.repository.GetUserSegments(input.UserId)
+	// Check TTL
+	if err := ur.userTTLRepository.DeleteUserSegments(input.UserId); err != nil {
+		http.Error(
+			w,
+			http.StatusText(http.StatusInternalServerError),
+			http.StatusInternalServerError,
+		)
+	}
+
+	segments, err := ur.userRepository.GetUserSegments(input.UserId)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
