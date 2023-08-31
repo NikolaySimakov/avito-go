@@ -1,15 +1,18 @@
 package app
 
 import (
+	"github.com/NikolaySimakov/avito-go/internal/db"
 	"github.com/NikolaySimakov/avito-go/internal/handlers"
 	"github.com/gorilla/mux"
 )
 
-func InitRouter() *mux.Router {
+func NewRouter(repos *db.Repositories) *mux.Router {
 	route := mux.NewRouter()
-	route.HandleFunc("/", handlers.AddUser).Methods("POST")
-	route.HandleFunc("/{id}", handlers.GetUserSegments).Methods("GET")
-	route.HandleFunc("/{id}", handlers.EditUserSegments).Methods("PUT")
-	route.HandleFunc("/{id}", handlers.DeleteUser).Methods("DELETE")
+
+	// Segments
+	segmentHandler := handlers.NewSegmentHandler(repos)
+	route.HandleFunc("/segment/", segmentHandler.Add).Methods("POST")
+	route.HandleFunc("/segment/", segmentHandler.Delete).Methods("DELETE")
+
 	return route
 }
