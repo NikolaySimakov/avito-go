@@ -1,5 +1,7 @@
-drop table if exists user_segments;
+DROP TABLE IF EXISTS user_segments;
 
-drop table  if exists users;
+DROP TABLE IF EXISTS user_ttl;
 
-drop table if exists segments;
+DROP TABLE IF EXISTS users;
+
+DROP TABLE IF EXISTS segments;
