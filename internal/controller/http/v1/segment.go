@@ -36,11 +36,19 @@ func (sr *SegmentRoutes) add(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&input)
 	if err != nil {
-		panic(err)
+		http.Error(
+			w,
+			http.StatusText(http.StatusInternalServerError),
+			http.StatusInternalServerError,
+		)
 	}
 
 	if err := sr.repository.CreateSegment(input.Slug); err != nil {
-		panic(err)
+		http.Error(
+			w,
+			err.Error(),
+			http.StatusConflict,
+		)
 	}
 
 	segmentOutput := createSegmentOutput{
@@ -50,7 +58,7 @@ func (sr *SegmentRoutes) add(w http.ResponseWriter, r *http.Request) {
 	jsonResponse, jsonError := json.Marshal(segmentOutput)
 
 	if jsonError != nil {
-		panic(jsonError)
+		http.Error(w, jsonError.Error(), http.StatusInternalServerError)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -67,11 +75,19 @@ func (sr *SegmentRoutes) delete(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&input)
 	if err != nil {
-		panic(err)
+		http.Error(
+			w,
+			http.StatusText(http.StatusInternalServerError),
+			http.StatusInternalServerError,
+		)
 	}
 
 	if err := sr.repository.DeleteSegment(input.Slug); err != nil {
-		panic(err)
+		http.Error(
+			w,
+			http.StatusText(http.StatusInternalServerError),
+			http.StatusInternalServerError,
+		)
 	}
 
 	w.WriteHeader(http.StatusNoContent)

@@ -33,19 +33,23 @@ func (ur *UserRoutes) add(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&input)
 	if err != nil {
-		panic(err)
+		http.Error(
+			w,
+			http.StatusText(http.StatusInternalServerError),
+			http.StatusInternalServerError,
+		)
 	}
 
 	if err := ur.repository.CreateUserIfNotExist(input.UserId); err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	if err := ur.repository.AddUserSegments(input.UserId, input.AddSegments); err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	if err := ur.repository.DeleteUserSegments(input.UserId, input.DeleteSegments); err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	w.WriteHeader(http.StatusNoContent)
@@ -65,17 +69,21 @@ func (ur *UserRoutes) show(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&input)
 	if err != nil {
-		panic(err)
+		http.Error(
+			w,
+			http.StatusText(http.StatusInternalServerError),
+			http.StatusInternalServerError,
+		)
 	}
 
 	segments, err := ur.repository.GetUserSegments(input.UserId)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	jsonResponse, jsonError := json.Marshal(segments)
 	if jsonError != nil {
-		panic(jsonError)
+		http.Error(w, jsonError.Error(), http.StatusInternalServerError)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
