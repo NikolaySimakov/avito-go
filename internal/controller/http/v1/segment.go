@@ -1,21 +1,25 @@
-package handlers
+package v1
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/NikolaySimakov/avito-go/internal/db"
+	"github.com/gorilla/mux"
 	// "github.com/NikolaySimakov/avito-go/internal/models"
 )
 
-type SegmentHandler struct {
+type SegmentRoutes struct {
 	repository db.Segment
 }
 
-func NewSegmentHandler(r db.Segment) *SegmentHandler {
-	return &SegmentHandler{
+func NewSegmentRouter(subrouter *mux.Router, r db.Segment) {
+	sr := &SegmentRoutes{
 		repository: r,
 	}
+
+	subrouter.HandleFunc("/", sr.Add).Methods("POST")
+	subrouter.HandleFunc("/", sr.Delete).Methods("DELETE")
 }
 
 type createSegmentInput struct {
@@ -26,7 +30,7 @@ type createSegmentResponse struct {
 	Slug string `json:"slug"`
 }
 
-func (sh *SegmentHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (sr *SegmentRoutes) Add(w http.ResponseWriter, r *http.Request) {
 	var input createSegmentInput
 
 	decoder := json.NewDecoder(r.Body)
@@ -35,7 +39,7 @@ func (sh *SegmentHandler) Add(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	if err := sh.repository.CreateSegment(input.Slug); err != nil {
+	if err := sr.repository.CreateSegment(input.Slug); err != nil {
 		panic(err)
 	}
 
@@ -58,7 +62,7 @@ type deleteSegmentInput struct {
 	Slug string `json:"slug"`
 }
 
-func (sh *SegmentHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (sr *SegmentRoutes) Delete(w http.ResponseWriter, r *http.Request) {
 	var input deleteSegmentInput
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&input)
@@ -66,7 +70,7 @@ func (sh *SegmentHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	if err := sh.repository.DeleteSegment(input.Slug); err != nil {
+	if err := sr.repository.DeleteSegment(input.Slug); err != nil {
 		panic(err)
 	}
 

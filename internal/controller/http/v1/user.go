@@ -1,20 +1,24 @@
-package handlers
+package v1
 
 import (
 	"encoding/json"
 	"net/http"
 
 	"github.com/NikolaySimakov/avito-go/internal/db"
+	"github.com/gorilla/mux"
 )
 
-type UserHandler struct {
+type UserRoutes struct {
 	repository db.User
 }
 
-func NewUserHandler(r db.User) *UserHandler {
-	return &UserHandler{
+func NewUserRouter(subrouter *mux.Router, r db.User) {
+	ur := &UserRoutes{
 		repository: r,
 	}
+
+	subrouter.HandleFunc("/", ur.show).Methods("GET")
+	subrouter.HandleFunc("/", ur.add).Methods("POST")
 }
 
 type userSegmentsInput struct {
@@ -23,7 +27,7 @@ type userSegmentsInput struct {
 	DeleteSegments []string `json:"delete_segments"`
 }
 
-func (uh *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (ur *UserRoutes) add(w http.ResponseWriter, r *http.Request) {
 	var input userSegmentsInput
 
 	decoder := json.NewDecoder(r.Body)
@@ -32,15 +36,15 @@ func (uh *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	if err := uh.repository.CreateUserIfNotExist(input.UserId); err != nil {
+	if err := ur.repository.CreateUserIfNotExist(input.UserId); err != nil {
 		panic(err)
 	}
 
-	if err := uh.repository.AddUserSegments(input.UserId, input.AddSegments); err != nil {
+	if err := ur.repository.AddUserSegments(input.UserId, input.AddSegments); err != nil {
 		panic(err)
 	}
 
-	if err := uh.repository.DeleteUserSegments(input.UserId, input.DeleteSegments); err != nil {
+	if err := ur.repository.DeleteUserSegments(input.UserId, input.DeleteSegments); err != nil {
 		panic(err)
 	}
 
@@ -55,7 +59,7 @@ type showSegmentsOutput struct {
 	Segments []string `json:"segments"`
 }
 
-func (uh *UserHandler) Show(w http.ResponseWriter, r *http.Request) {
+func (ur *UserRoutes) show(w http.ResponseWriter, r *http.Request) {
 	var input showSegmentsInput
 
 	decoder := json.NewDecoder(r.Body)
@@ -64,7 +68,7 @@ func (uh *UserHandler) Show(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	segments, err := uh.repository.GetUserSegments(input.UserId)
+	segments, err := ur.repository.GetUserSegments(input.UserId)
 	if err != nil {
 		panic(err)
 	}
