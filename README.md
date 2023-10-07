@@ -1,12 +1,15 @@
-# Avito Go Task
+# user-segmentation-service
 
-Требуется реализовать сервис, хранящий пользователя и сегменты, в которых он состоит (создание, изменение, удаление сегментов, а также добавление и удаление пользователей в сегмент).
+[![GoDoc](https://godoc.org/github.com/lib/pq?status.svg)](https://pkg.go.dev/github.com/lib/pq?tab=doc)
 
-Для запуска сервиса:
-- Переименуйте .env.example в .env, укажите все необходимые переменные
-- Запустите файл `migrations/create_tables.sql`, чтобы создать все необходимые таблицы.
+It is required to implement a service that stores the user and the segments to which he belongs (creating, changing, deleting segments, as well as adding and deleting users in the segment).
 
-Запустите приложение:
+To start the service:
+
+- Rename .env.example to .env, specify all the necessary variables
+- Run the file `migrations/create_tables.sql` to create all the necessary tables.
+
+Launch the application:
 
 ```
 go run cmd/main.go
@@ -14,81 +17,76 @@ go run cmd/main.go
 
 ## Usage
 
-Основные HTTP запросы к серверу:
+Basic HTTP requests to the server:
 
-### POST: /segment/ - добавить сегмент
+### POST: /segment/ - add segment
 
 ```json
 {
-    "slug": "AVITO_VOICE_MESSAGES"
+	"slug": "AVITO_VOICE_MESSAGES"
 }
 ```
 
-Сервер вернет такой же респонс.
+The server will return the same response.
 
-### DELETE: /segment/ - удалить сегмент
+### DELETE: /segment/ - delete segment
 
 ```json
 {
-    "slug": "AVITO_VOICE_MESSAGES"
+	"slug": "AVITO_VOICE_MESSAGES"
 }
 ```
 
 ### POST: /user/
 
-Отвечает за добавление и удаление пользователя в сегменты.
+For adding and removing users to segments.
 
 ```json
 {
-    "user_id": "1000",
-    "add_segments": ["SEGMENT_1", "SEGMENT_2"],
-    "delete_segments": ["SEGMENT_3"]
+	"user_id": "1000",
+	"add_segments": ["SEGMENT_1", "SEGMENT_2"],
+	"delete_segments": ["SEGMENT_3"]
 }
 ```
 
 ### GET: /user/
 
-Возвращает сегменты пользователя.
+Returns user segments.
 
 ```json
 {
-    "user_id": "1000"
+	"user_id": "1000"
 }
 ```
 
-Респонс:
+Response:
 
 ```json
-[
-    "SEGMENT_1",
-    "SEGMENT_2"
-]
+["SEGMENT_1", "SEGMENT_2"]
 ```
-
 
 ### POST: /user/
 
-Пример использования ограничителя времени из второго задания. Пользователь с данным ID будет добавлен в указанный сегмент с TTL:
+An example of using the time limiter from the second task. The user with this ID will be added to the specified segment with TTL:
 
 ```json
 {
-    "user_id": "1000",
-    "add_segments": ["SEGMENT_1"],
-    "delete_segments": [],
-    "ttl": 2
+	"user_id": "1000",
+	"add_segments": ["SEGMENT_1"],
+	"delete_segments": [],
+	"ttl": 2
 }
 ```
 
-Дедлайн в данном JSON запросе установлен на 2 минуты. Чтобы убедиться, что данные исчезнут по истечении срока, воспользуйтесь:
+The deadline in this JSON request is set to 2 minutes. To make sure your data disappears after the expiration date, use:
 
 GET: /user/
 
 ```json
 {
-    "user_id": "1000"
+	"user_id": "1000"
 }
 ```
-
 
 ## Endpoints
 
@@ -100,15 +98,15 @@ GET: /user/
 
 ## TODO
 
-- [x] Метод создания сегмента. Принимает slug (название) сегмента.
-- [x] Метод удаления сегмента. Принимает slug (название) сегмента.
-- [x] Метод добавления пользователя в сегмент. Принимает список slug (названий сегментов которые нужно добавить пользователю, список slug (названий) сегментов которые нужно удалить у пользователя, id пользователя.
-- [x] Метод получения активных сегментов пользователя. Принимает на вход id пользователя.
+- [x] Segment creation method. Accepts a slug (name) of a segment.
+- [x] Segment removal method. Accepts a slug (name) of a segment.
+- [x] Method for adding a user to a segment. Receives a list of slugs (names of segments that need to be added to the user, a list of slugs (names) of segments that need to be removed from the user, user id.
+- [x] Method for obtaining active user segments. Accepts user id as input.
 
-### ✅ Доп. задание 2
+### ✅ Additional task 2
 
-Бывают ситуации когда нам нужно добавить пользователя в эксперимент на ограниченный срок. Например выдать скидку всего на 2 дня.
+There are situations when we need to add a user to an experiment for a limited period. For example, give a discount for only 2 days.
 
-Задача: реализовать возможность задавать TTL (время автоматического удаления пользователя из сегмента)
+Task: implement the ability to set TTL (time for automatically removing a user from a segment)
 
-Пример: Хотим чтобы пользователь попал в сегмент на 2 дня - для этого в метод добавления сегментов пользователю передаём время удаления пользователя из сегмента отдельным полем
+Example: We want the user to be in a segment for 2 days - for this, in the method for adding segments to the user, we pass the time the user was removed from the segment as a separate field
