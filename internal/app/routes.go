@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/NikolaySimakov/avito-go/internal/controller/http/v1"
-	"github.com/NikolaySimakov/avito-go/internal/db"
+	v1 "github.com/NikolaySimakov/user-segmentation-service/internal/controller/http/v1"
+	"github.com/NikolaySimakov/user-segmentation-service/internal/db"
 	"github.com/gorilla/mux"
 )
 

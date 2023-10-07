@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/NikolaySimakov/avito-go/internal/db/errors"
+	"github.com/NikolaySimakov/user-segmentation-service/internal/db/errors"
 )
 
 type UserTTLRepository struct {

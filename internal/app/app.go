@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/NikolaySimakov/avito-go/config"
-	"github.com/NikolaySimakov/avito-go/internal/db"
+	"github.com/NikolaySimakov/user-segmentation-service/config"
+	"github.com/NikolaySimakov/user-segmentation-service/internal/db"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )

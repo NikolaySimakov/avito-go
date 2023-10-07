@@ -1,4 +1,4 @@
-module github.com/NikolaySimakov/avito-go
+module github.com/NikolaySimakov/user-segmentation-service
 
 go 1.19
 

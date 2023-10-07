@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	"github.com/NikolaySimakov/avito-go/internal/db/repositories"
+	"github.com/NikolaySimakov/user-segmentation-service/internal/db/repositories"
 )
 
 type Segment interface {

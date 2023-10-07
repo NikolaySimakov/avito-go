@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/NikolaySimakov/avito-go/internal/db"
+	"github.com/NikolaySimakov/user-segmentation-service/internal/db"
 	"github.com/gorilla/mux"
 )
 
